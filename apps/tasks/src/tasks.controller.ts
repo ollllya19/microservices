@@ -1,20 +1,19 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { TasksService } from './tasks.service';
-import { Ctx, MessagePattern, RmqContext } from '@nestjs/microservices';
+import { Ctx, MessagePattern, RmqContext, Payload } from '@nestjs/microservices';
 
 @Controller()
 export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
 
   @MessagePattern({ cmd: 'process-task' }) 
-  async processTask(@Ctx() context: RmqContext){
+  async processTask(@Payload() data: number, @Ctx() context: RmqContext){
     const channel = context.getChannelRef()
     const message = context.getMessage()
     channel.ack(message)
 
-    console.log('Processing message: ', message)
-    // вызвать метод сервиса
+    const num = data['number']
 
-    return { task: "User"}
+    return { result: Math.pow(num, 2) }
   }
 }

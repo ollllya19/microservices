@@ -11,3 +11,32 @@ services:
       - '15672:15672'
     env_file:
       - .env
+
+  tasks:
+    build:
+      context: ./
+      dockerfile: ./apps/tasks/Dockerfile
+    env_file:
+      - .env
+    depends_on:
+      - rabbitmq
+    volumes:
+      - .:/usr/src/app 
+      - /usr/src/app/node_modules
+    command: npm run start:dev tasks
+
+  m1:
+    build:
+      context: ./
+      dockerfile: ./apps/m1/Dockerfile
+    ports:
+      - '3000:3000'
+    env_file:
+      - .env
+    depends_on:
+      - rabbitmq
+      - tasks
+    volumes:
+      - .:/usr/src/app 
+      - /usr/src/app/node_modules
+    command: npm run start:dev m1
