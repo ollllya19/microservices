@@ -7,13 +7,8 @@ export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
 
   @MessagePattern({ cmd: 'process-task' }) 
-  async processTask(@Payload() data: number, @Ctx() context: RmqContext){
-    const channel = context.getChannelRef()
-    const message = context.getMessage()
-    channel.ack(message)
+  async processTask(@Payload() data, @Ctx() context: RmqContext){
 
-    const num = data['number']
-
-    return { result: Math.pow(num, 2) }
+    return this.tasksService.processTask(data)
   }
 }

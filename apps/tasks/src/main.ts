@@ -4,7 +4,9 @@ import { ConfigService } from '@nestjs/config';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 
 async function bootstrap() {
-  const app = await NestFactory.create(TasksModule);
+  const app = await NestFactory.create(TasksModule,{
+      logger: ['log', 'error', 'warn', 'debug'],
+    });
   const configService = app.get(ConfigService);
 
   const USER = configService.get('RABBITMQ_USER')
